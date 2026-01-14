@@ -1,0 +1,291 @@
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h4 class="modal-title m-0"><i class="fas fa-plus-circle mr-2"></i>Thêm sản phẩm mới</h4>
+        <button type="button" class="close text-white" (click)="d('Cross click')"><span>&times;</span></button>
+    </div>
+    <div class="modal-body p-0" style="max-height: 80vh; overflow-y: auto; background: #f5f7fa;">
+        <!-- Upload indicator -->
+        <div *ngIf="isUploading" class="alert alert-info py-2 m-3 mb-0">
+            <div class="spinner-border spinner-border-sm mr-2"></div> Đang upload ảnh...
+        </div>
+
+        <form [formGroup]="postForm" class="p-3">
+            <input type="hidden" formControlName='productId'>
+            <input type="hidden" formControlName="status">
+            <input type="hidden" formControlName="sold">
+
+            <!-- Basic Info - New Layout -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 font-weight-bold text-primary"><i class="fas fa-box-open mr-2"></i>Thông tin sản
+                        phẩm</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Left: Product Image -->
+                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                            <div class="position-relative mx-auto" style="width: 160px;">
+                                <img [src]="image" class="img-fluid rounded shadow-sm"
+                                    style="width: 160px; height: 160px; object-fit: cover; border: 3px solid #e9ecef;">
+                                <input type="file" class="d-none" id="mainImg" (change)="onFileSelect($event)">
+                                <label for="mainImg" class="btn btn-sm btn-primary position-absolute"
+                                    style="bottom: -10px; left: 50%; transform: translateX(-50%);">
+                                    <i class="fas fa-camera mr-1"></i>Chọn ảnh
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mt-3">Ảnh đại diện sản phẩm</small>
+                        </div>
+
+                        <!-- Right: Product Info -->
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label class="font-weight-bold text-dark mb-1"><i
+                                            class="fas fa-tag text-muted mr-1"></i>Tên sản phẩm <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" formControlName="name"
+                                        placeholder="Nhập tên sản phẩm...">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="font-weight-bold text-dark mb-1"><i
+                                            class="fas fa-folder text-muted mr-1"></i>Loại hàng</label>
+                                    <select class="form-control" formControlName="categoryId">
+                                        <option *ngFor="let item of categories" [value]="item.categoryId">
+                                            {{item.categoryName}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="font-weight-bold text-dark mb-1"><i
+                                            class="fas fa-dollar-sign text-muted mr-1"></i>Giá bán <span
+                                            class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" formControlName="price"
+                                            placeholder="0">
+                                        <div class="input-group-append"><span class="input-group-text">đ</span></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="font-weight-bold text-dark mb-1"><i
+                                            class="fas fa-warehouse text-muted mr-1"></i>Số lượng tổng</label>
+                                    <input type="number" class="form-control" formControlName="quantity"
+                                        placeholder="0" [readonly]="sizes.length > 0 && colors.length > 0">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="font-weight-bold text-dark mb-1"><i
+                                            class="fas fa-percent text-muted mr-1"></i>Giảm giá</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" formControlName="discount"
+                                            placeholder="0">
+                                        <div class="input-group-append"><span class="input-group-text">%</span></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="font-weight-bold text-dark mb-1"><i
+                                            class="fas fa-align-left text-muted mr-1"></i>Mô tả sản phẩm</label>
+                                    <textarea class="form-control" rows="2" formControlName="description"
+                                        placeholder="Mô tả chi tiết về sản phẩm..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sizes and Colors Row -->
+            <div class="row">
+                <!-- Step 1: Sizes -->
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div
+                            class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 font-weight-bold" style="color: #17a2b8;"><i
+                                    class="fas fa-ruler-combined mr-2"></i>Sizes</h6>
+                            <span class="badge badge-info badge-pill">{{sizes.length}}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="VD: 35, 36, 37..."
+                                    [(ngModel)]="newSize" [ngModelOptions]="{standalone: true}"
+                                    (keyup.enter)="addSize()">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-info" (click)="addSize()"><i
+                                            class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap" style="gap: 8px; min-height: 40px;">
+                                <span *ngFor="let size of sizes; let i = index"
+                                    class="badge badge-pill py-2 px-3 d-flex align-items-center"
+                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 13px;">
+                                    {{size.sizeValue}}
+                                    <i class="fas fa-times ml-2" style="cursor: pointer; opacity: 0.7;"
+                                        (click)="removeSize(i)"></i>
+                                </span>
+                                <span *ngIf="sizes.length === 0" class="text-muted fst-italic">Thêm size cho sản
+                                    phẩm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Colors -->
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div
+                            class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 font-weight-bold" style="color: #fd7e14;"><i
+                                    class="fas fa-palette mr-2"></i>Màu sắc</h6>
+                            <span class="badge badge-warning badge-pill">{{colors.length}}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <input type="text" class="form-control" placeholder="Tên màu (VD: Đen)"
+                                        [(ngModel)]="newColorName" [ngModelOptions]="{standalone: true}">
+                                </div>
+                                <div class="col-3">
+                                    <input type="color" class="form-control p-1 h-100" [(ngModel)]="newColorCode"
+                                        [ngModelOptions]="{standalone: true}">
+                                </div>
+                                <div class="col-3">
+                                    <button type="button" class="btn btn-warning btn-block text-white"
+                                        (click)="addColor()"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap" style="gap: 8px; min-height: 40px;">
+                                <span *ngFor="let color of colors; let i = index"
+                                    class="badge badge-pill py-2 px-3 d-flex align-items-center bg-light border">
+                                    <span [style.background]="color.colorCode"
+                                        style="width: 16px; height: 16px; border-radius: 50%; margin-right: 6px; border: 2px solid white; box-shadow: 0 0 3px rgba(0,0,0,0.3);"></span>
+                                    {{color.colorName}}
+                                    <i class="fas fa-times ml-2 text-danger" style="cursor: pointer;"
+                                        (click)="removeColor(i)"></i>
+                                </span>
+                                <span *ngIf="colors.length === 0" class="text-muted fst-italic">Thêm màu cho sản
+                                    phẩm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Images -->
+            <div class="card shadow-sm border-0 mb-3" *ngIf="colors.length > 0">
+                <div class="card-header bg-white border-bottom py-2">
+                    <h6 class="mb-0 font-weight-bold" style="color: #28a745;"><i class="fas fa-images mr-2"></i>Ảnh theo
+                        màu sắc</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div *ngFor="let color of colors; let colorIdx = index" class="col-md-6 col-lg-4 mb-3">
+                            <div class="border rounded p-2 h-100" [style.border-left-color]="color.colorCode"
+                                style="border-left-width: 4px !important;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span [style.background]="color.colorCode"
+                                        style="width: 20px; height: 20px; border-radius: 50%; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                    <strong>{{color.colorName}}</strong>
+                                    <span class="badge badge-secondary ml-auto">{{color.images.length}} ảnh</span>
+                                </div>
+                                <div class="d-flex flex-wrap align-items-center" style="gap: 6px;">
+                                    <div *ngFor="let img of color.images; let imgIdx = index" class="position-relative"
+                                        style="width: 50px; height: 50px;">
+                                        <img [src]="img.imageUrl"
+                                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <button type="button" class="btn btn-sm btn-danger position-absolute p-0"
+                                            style="top: -6px; right: -6px; width: 18px; height: 18px; line-height: 1; border-radius: 50%;"
+                                            (click)="removeImageFromColor(colorIdx, imgIdx)">×</button>
+                                    </div>
+                                    <input type="file" class="d-none" [id]="'colorImg'+colorIdx"
+                                        (change)="onColorImageSelect($event, colorIdx)" [disabled]="isUploading">
+                                    <label [for]="'colorImg'+colorIdx"
+                                        class="btn btn-outline-success btn-sm m-0 d-flex align-items-center justify-content-center"
+                                        style="width: 50px; height: 50px; border-style: dashed;"
+                                        [class.disabled]="isUploading">
+                                        <span *ngIf="uploadingColorIndex === colorIdx"><i
+                                                class="fas fa-spinner fa-spin"></i></span>
+                                        <span *ngIf="uploadingColorIndex !== colorIdx"><i
+                                                class="fas fa-plus"></i></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Quantity Matrix -->
+            <div class="card shadow-sm border-0" *ngIf="sizes.length > 0 && colors.length > 0">
+                <div class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 font-weight-bold" style="color: #dc3545;"><i class="fas fa-th mr-2"></i>Số lượng tồn
+                        kho</h6>
+                    <div class="d-flex align-items-center">
+                        <span class="text-muted mr-2">Tổng:</span>
+                        <span class="badge badge-danger badge-pill px-3 py-2"
+                            style="font-size: 14px;">{{getGrandTotal()}}</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead style="background: #f8f9fa;">
+                                <tr>
+                                    <th class="border-0 text-center" style="width: 100px; font-weight: 600;">SIZE</th>
+                                    <th *ngFor="let color of colors" class="border-0 text-center"
+                                        style="min-width: 120px;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span [style.background]="color.colorCode"
+                                                style="width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></span>
+                                            <span style="font-weight: 600;">{{color.colorName}}</span>
+                                        </div>
+                                    </th>
+                                    <th class="border-0 text-center"
+                                        style="width: 100px; background: #e9ecef; font-weight: 600;">TỔNG</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let size of sizes; let sizeIdx = index">
+                                    <td class="text-center align-middle" style="background: #f8f9fa; font-weight: 600;">
+                                        <span class="badge badge-pill px-3 py-2"
+                                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">{{size.sizeValue}}</span>
+                                    </td>
+                                    <td *ngFor="let color of colors; let colorIdx = index" class="text-center p-2">
+                                        <input type="number" class="form-control text-center mx-auto"
+                                            style="width: 80px; border-radius: 8px;"
+                                            [ngModel]="getQuantity(sizeIdx, colorIdx)"
+                                            (ngModelChange)="setQuantity(sizeIdx, colorIdx, $event)"
+                                            [ngModelOptions]="{standalone: true}" min="0" placeholder="0">
+                                    </td>
+                                    <td class="text-center align-middle" style="background: #e9ecef;">
+                                        <span class="font-weight-bold text-dark">{{getSizeTotal(sizeIdx)}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot style="background: #f8f9fa;">
+                                <tr>
+                                    <td class="text-center" style="font-weight: 600; background: #e9ecef;">TỔNG</td>
+                                    <td *ngFor="let color of colors; let colorIdx = index" class="text-center">
+                                        <span class="font-weight-bold"
+                                            style="color: #fd7e14;">{{getColorTotal(colorIdx)}}</span>
+                                    </td>
+                                    <td class="text-center"
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        <span class="font-weight-bold text-white"
+                                            style="font-size: 16px;">{{getGrandTotal()}}</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-outline-secondary" (click)="d('Cancel')"><i
+                class="fas fa-times mr-1"></i>Hủy</button>
+        <button type="button" class="btn btn-primary px-4" [disabled]="postForm.invalid || isUploading"
+            (click)="save()">
+            <i class="fas fa-save mr-1"></i>Lưu sản phẩm
+        </button>
+    </div>
+</ng-template>
+<button mat-raised-button color="primary" (click)="open(content)"><i class="fas fa-plus mr-1"></i>Thêm sản phẩm</button>

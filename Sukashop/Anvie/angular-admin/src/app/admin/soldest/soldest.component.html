@@ -1,0 +1,78 @@
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-fire text-danger mr-2"></i>Top 10 sản phẩm bán chạy nhất
+        </h1>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+        <p class="mt-3">Đang tải dữ liệu...</p>
+    </div>
+
+    <!-- No data -->
+    <div *ngIf="!isLoading && !hasData" class="alert alert-warning text-center">
+        <i class="fas fa-exclamation-triangle mr-2"></i>Chưa có dữ liệu sản phẩm bán chạy
+    </div>
+
+    <!-- Content Row -->
+    <div class="row" *ngIf="!isLoading && hasData">
+        <!-- Left: Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-gradient-primary text-white">
+                    <h6 class="m-0 font-weight-bold"><i class="fas fa-chart-bar mr-2"></i>Biểu đồ</h6>
+                </div>
+                <div class="card-body" style="height: 450px;">
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Table -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-gradient-success text-white">
+                    <h6 class="m-0 font-weight-bold"><i class="fas fa-list mr-2"></i>Danh sách chi tiết</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table mat-table [dataSource]="listData" matSort class="w-100">
+                        <ng-container matColumnDef="image">
+                            <th mat-header-cell *matHeaderCellDef style="width: 60px;"></th>
+                            <td mat-cell *matCellDef="let row" class="py-1">
+                                <img [src]="row.image" width="45" height="45"
+                                    style="object-fit: cover; border-radius: 4px;">
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="productId">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 70px;">Mã</th>
+                            <td mat-cell *matCellDef="let row">{{row.productId}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tên sản phẩm</th>
+                            <td mat-cell *matCellDef="let row" class="text-truncate" style="max-width: 150px;">
+                                {{row.name}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="sold">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 80px;">Đã bán</th>
+                            <td mat-cell *matCellDef="let row">
+                                <span class="badge badge-success">{{row.sold}}</span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="category">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 100px;">Loại</th>
+                            <td mat-cell *matCellDef="let row">{{row.category.categoryName}}</td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+                    </table>
+                    <mat-paginator [length]="productsLength" showFirstLastButtons [pageSize]="10"
+                        [pageSizeOptions]="[10, 25, 50]">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

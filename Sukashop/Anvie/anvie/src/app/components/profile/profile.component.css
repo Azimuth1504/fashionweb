@@ -1,0 +1,50 @@
+.my-page /deep/ .ngx-pagination {
+  margin: auto !important;
+}
+
+.my-page /deep/ .ngx-pagination .current {
+  padding: 0px;
+}
+
+.my-page /deep/ .ngx-pagination .current span {
+  padding: 7px 16px !important;
+  background-color: #CD853F !important;
+  border-radius: 10%;
+}
+
+.my-page /deep/ .ngx-pagination li {
+  margin: 4px;
+}
+
+.my-page /deep/ .ngx-pagination li a {
+  padding: 7px 16px !important;
+  background-color: rgba(212, 212, 212, 0.233);
+  border-radius: 10%;
+}
+
+.status {
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.status-pending {
+  background-color: #ffe082;
+  color: #795548;
+}
+
+.status-shipping {
+  background-color: #81d4fa;
+  color: #01579b;
+}
+
+.status-delivered {
+  background-color: #a5d6a7;
+  color: #1b5e20;
+}
+
+.status-cancelled {
+  background-color: #ef9a9a;
+  color: #b71c1c;
+}

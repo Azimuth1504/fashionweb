@@ -1,0 +1,343 @@
+<div class="ps-breadcrumb">
+    <div class="ps-container">
+        <ul class="breadcrumb">
+            <li><a [routerLink]="['/home']">Trang chủ</a></li>
+            <li><a [routerLink]="['/all-product']">Cửa hàng</a></li>
+            <li>Chi tiết sản phẩm</li>
+        </ul>
+    </div>
+</div>
+<div class="row" style="min-height: 700px !important;" *ngIf="isLoading">
+    <div class="spinner-border text-success" role="status" style="margin: auto; width: 6em;height: 6em;"></div>
+</div>
+<div class="ps-page--product" *ngIf="!isLoading">
+    <div class="ps-container">
+        <div class="ps-page__container">
+            <div class="ps-page__left">
+                <div class="ps-product--detail ps-product--fullwidth">
+                    <div class="ps-product__header">
+                        <div class="ps-product__thumbnail">
+                            <figure>
+                                <div class="ps-wrapper">
+                                    <div class="ps-product__gallery">
+                                        <!-- Main Image - Fixed Size -->
+                                        <div
+                                            style="position: relative; width: 100%; height: 450px; background: #f8f8f8; border-radius: 8px; overflow: hidden;">
+                                            <img [src]="getCurrentImage()" alt=""
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                            <div *ngIf="currentImages.length > 1"
+                                                style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">
+                                                <button (click)="prevImage()"
+                                                    style="width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,0.5); color: white; border: none; cursor: pointer;"><i
+                                                        class="fa fa-chevron-left"></i></button>
+                                            </div>
+                                            <div *ngIf="currentImages.length > 1"
+                                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+                                                <button (click)="nextImage()"
+                                                    style="width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,0.5); color: white; border: none; cursor: pointer;"><i
+                                                        class="fa fa-chevron-right"></i></button>
+                                            </div>
+                                            <div *ngIf="currentImages.length > 1"
+                                                style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">
+                                                {{currentImageIndex + 1}}/{{currentImages.length}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Thumbnails -->
+                                        <div
+                                            style="display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; padding: 5px 0;">
+                                            <div *ngFor="let img of currentImages; let i = index"
+                                                (click)="selectImage(i)"
+                                                [style.border]="i === currentImageIndex ? '2px solid #f14705' : '1px solid #ddd'"
+                                                style="width: 60px; height: 60px; flex-shrink: 0; border-radius: 4px; overflow: hidden; cursor: pointer;">
+                                                <img [src]="img.imageUrl"
+                                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </figure>
+                        </div>
+                        <div class="ps-product__info">
+                            <h1>{{product.name}}</h1>
+                            <div class="ps-product__desc" *ngIf="getAvgRate(product.productId)>0">
+                                <ngb-rating [rate]="getAvgRate(product.productId)" [starTemplate]="t" [readonly]="true"
+                                    [max]="5"></ngb-rating>
+                                ({{countRate}} đánh giá)
+                            </div>
+                            <p class="ps-product__price sale">
+                                <del *ngIf="product.discount != 0">{{product.price|currency:'VND'}}</del>
+                                {{product.price*(1 - product.discount/100) | currency:'VND'}}
+                            </p>
+
+                            <!-- Color Preview (chỉ để xem, không hiện số lượng) -->
+                            <div *ngIf="product.colors && product.colors.length > 0" style="margin: 20px 0;">
+                                <h5 style="font-weight: 600; margin-bottom: 10px;">Màu sắc: <span
+                                        style="font-weight: normal;">{{selectedColor?.colorName}}</span></h5>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <div *ngFor="let color of product.colors" (click)="selectColor(color)"
+                                        [style.border]="selectedColor?.colorId === color.colorId ? '2px solid #f14705' : '1px solid #ddd'"
+                                        style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                        <span [style.background]="color.colorCode"
+                                            style="width: 32px; height: 32px; border-radius: 50%; display: block; border: 1px solid #ccc;"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ps-product__desc">
+                                <p>Thể loại: <a
+                                        href="javascript:void(0);"><strong>{{product.category.categoryName}}</strong></a>
+                                </p>
+                                <p>Đã bán: <strong style="color: #f14705;">{{product.sold}}</strong></p>
+                                <p style="text-decoration: underline;">Mô tả sản phẩm:</p>
+                                <p>{{product.description}}</p>
+                            </div>
+                            <div class="ps-product__shopping">
+                                <a class="ps-btn ps-btn--black" href="javascript:void(0);" (click)="openConfirmModal()"
+                                    style="display: inline-flex; align-items: center;">
+                                    <i class="fa fa-shopping-cart" style="margin-right: 8px;"></i> Thêm Giỏ Hàng
+                                </a>
+                                <div class="ps-product__actions">
+                                    <a href="javascript:void(0);" (click)="toggleLike(product.productId)"><i
+                                            style="color: #ffcc23;" class="icon-heart"></i></a> {{totalLike}} lượt thích
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reviews Section -->
+                    <div class="ps-product__content ps-tab-root">
+                        <ul class="ps-tab-list">
+                            <li class="active"><a href="javascript:void(0);">Đánh giá sản phẩm</a></li>
+                        </ul>
+                        <div class="ps-tab active" id="tab-1">
+                            <div class="table-responsive">
+                                <p *ngIf="rates.length==0" style="text-decoration: underline;">Sản phẩm này chưa có đánh
+                                    giá.</p>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <table class="table table-bordered ps-table ps-table--specification">
+                                            <tbody>
+                                                <tr
+                                                    *ngFor="let item of rates | paginate: { itemsPerPage: itemsComment, currentPage: 1}">
+                                                    <td><img [src]="item.user.image" alt="" /></td>
+                                                    <td>
+                                                        <h5>Họ Tên: <a>{{item.user.name}}</a></h5>
+                                                        <h5>Ngày: {{item.rateDate|date:'dd-MM-yyyy'}}</h5>
+                                                        <h5>Đánh giá: <ngb-rating class="ml-2" [(rate)]="item.rating"
+                                                                [starTemplate]="t" [readonly]="true"
+                                                                [max]="5"></ngb-rating></h5>
+                                                        <h5>Nội dung: <p style="color: #09c;">{{item.comment}}</p>
+                                                        </h5>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-2" *ngIf="rates.length!=0">
+                                        <h5>Hiển thị:</h5>
+                                        <select class="custom-select" [(ngModel)]="itemsComment"
+                                            (change)="setItemsComment(itemsComment)">
+                                            <option value="3">3</option>
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ps-page__right">
+                <aside class="widget widget_product widget_features">
+                    <p><i class="icon-network"></i> Vận chuyển toàn quốc</p>
+                    <p><i class="icon-3d-rotate"></i> Hoàn trả 7 ngày</p>
+                    <p><i class="icon-credit-card"></i> Thanh toán linh hoạt</p>
+                </aside>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="row" *ngIf="!isLoading && products && products.length > 0">
+            <div class="ps-section--default">
+                <div class="ps-section__header">
+                    <h3>Sản phẩm liên quan</h3>
+                </div>
+                <div class="ps-section__content">
+                    <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig">
+                        <div ngxSlickItem *ngFor="let item of products | paginate: { itemsPerPage: 8, currentPage: 0}"
+                            class="slide">
+                            <div class="ps-product">
+                                <div class="ps-product__thumbnail">
+                                    <a [routerLink]="['/product-detail/'+item.productId]">
+                                        <img [src]="item.image"
+                                            style="width: 100%; height: 200px; object-fit: cover;" />
+                                    </a>
+                                    <div class="ps-product__badge">-{{item.discount}}%</div>
+                                </div>
+                                <div class="ps-product__container">
+                                    <a class="ps-product__vendor"
+                                        href="javascript:void(0);"><span>{{item.category.categoryName}}</span></a>
+                                    <div class="ps-product__content">
+                                        <a class="ps-product__title"
+                                            [routerLink]="['/product-detail/'+item.productId]">{{item.name}}</a>
+                                        <p class="ps-product__price sale">
+                                            <del *ngIf="item.discount != 0">{{item.price|currency:'VND'}}</del>
+                                            {{item.price*(1 - item.discount/100) | currency:'VND'}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ngx-slick-carousel>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Shopee-style Confirm Modal -->
+<ng-template #confirmModal let-modal>
+    <div class="modal-header"
+        style="background: linear-gradient(135deg, #f14705 0%, #ff6b35 100%); color: white; padding: 12px 20px;">
+        <h5 class="modal-title m-0"><i class="fa fa-shopping-cart mr-2"></i>Chọn phân loại hàng</h5>
+        <button type="button" class="close text-white" (click)="modal.dismiss()"><span>&times;</span></button>
+    </div>
+    <div class="modal-body p-0" style="max-height: 70vh; overflow-y: auto;">
+        <div class="row no-gutters">
+            <!-- Left: Image Gallery -->
+            <div class="col-md-5" style="background: #f8f8f8; padding: 15px;">
+                <div
+                    style="position: relative; width: 100%; height: 280px; border-radius: 8px; overflow: hidden; background: white;">
+                    <img [src]="getModalCurrentImage()" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div *ngIf="modalCurrentImages.length > 1">
+                        <button (click)="modalPrevImage()"
+                            style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.5); color: white; border: none; cursor: pointer; font-size: 12px;"><i
+                                class="fa fa-chevron-left"></i></button>
+                        <button (click)="modalNextImage()"
+                            style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.5); color: white; border: none; cursor: pointer; font-size: 12px;"><i
+                                class="fa fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <!-- Thumbnails -->
+                <div style="display: flex; gap: 6px; margin-top: 10px; overflow-x: auto;"
+                    *ngIf="modalCurrentImages.length > 1">
+                    <div *ngFor="let img of modalCurrentImages; let i = index" (click)="selectModalImage(i)"
+                        [style.border]="i === modalImageIndex ? '2px solid #f14705' : '1px solid #ddd'"
+                        style="width: 45px; height: 45px; flex-shrink: 0; border-radius: 4px; overflow: hidden; cursor: pointer;">
+                        <img [src]="img.imageUrl" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+                <!-- Product Info -->
+                <div style="margin-top: 15px; background: white; padding: 10px; border-radius: 8px;">
+                    <h6 style="margin: 0 0 8px 0; font-weight: 600;">{{product.name}}</h6>
+                    <div style="color: #f14705; font-size: 20px; font-weight: bold;">{{product.price*(1 -
+                        product.discount/100) | currency:'VND'}}</div>
+                    <div *ngIf="confirmSelectedSize && confirmSelectedColor"
+                        style="margin-top: 8px; color: #28a745; font-size: 13px;">
+                        <i class="fa fa-check-circle"></i> Còn <strong>{{getVariantQuantity()}}</strong> sản phẩm
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Size & Color Selection -->
+            <div class="col-md-7" style="padding: 20px;">
+                <!-- Size Selection -->
+                <div *ngIf="product.sizes && product.sizes.length > 0" style="margin-bottom: 20px;">
+                    <label style="font-weight: 600; margin-bottom: 10px; display: block;">Size</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <button *ngFor="let size of product.sizes" type="button" (click)="selectConfirmSize(size)"
+                            [style.background]="confirmSelectedSize?.sizeId === size.sizeId ? '#ffeee8' : '#fff'"
+                            [style.border-color]="confirmSelectedSize?.sizeId === size.sizeId ? '#f14705' : '#ddd'"
+                            [style.color]="confirmSelectedSize?.sizeId === size.sizeId ? '#f14705' : '#333'"
+                            style="padding: 8px 20px; border: 1px solid; border-radius: 4px; cursor: pointer; font-weight: 500;">
+                            {{size.sizeValue}}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Color Selection (shows only colors available for selected size) -->
+                <div *ngIf="confirmSelectedSize && getColorsForSize().length > 0" style="margin-bottom: 20px;">
+                    <label style="font-weight: 600; margin-bottom: 10px; display: block;">
+                        Màu sắc
+                        <span *ngIf="confirmSelectedColor" style="font-weight: normal; color: #666;">-
+                            {{confirmSelectedColor.colorName}}</span>
+                    </label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <div *ngFor="let color of getColorsForSize()" (click)="selectConfirmColor(color)"
+                            [style.border]="confirmSelectedColor?.colorId === color.colorId || confirmSelectedColor?.colorName === color.colorName ? '2px solid #f14705' : '1px solid #ddd'"
+                            style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 4px; cursor: pointer; background: #fff;">
+                            <span [style.background]="color.colorCode"
+                                style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #ccc;"></span>
+                            <span>{{color.colorName}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="confirmSelectedSize && getColorsForSize().length === 0" class="alert alert-warning py-2">
+                    <i class="fa fa-exclamation-circle"></i> Size này hiện đang hết hàng
+                </div>
+
+                <!-- Summary -->
+                <div *ngIf="confirmSelectedSize && confirmSelectedColor"
+                    style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Size:</span>
+                        <strong>{{confirmSelectedSize.sizeValue}}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Màu:</span>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span [style.background]="confirmSelectedColor.colorCode"
+                                style="width: 14px; height: 14px; border-radius: 50%; border: 1px solid #ccc;"></span>
+                            <strong>{{confirmSelectedColor.colorName}}</strong>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Kho:</span>
+                        <strong style="color: #28a745;">{{getVariantQuantity()}} sản phẩm</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="padding: 12px 20px; border-top: 1px solid #eee;">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Hủy</button>
+        <button type="button" class="btn"
+            [disabled]="!confirmSelectedSize || !confirmSelectedColor || getVariantQuantity() <= 0"
+            (click)="confirmAddCart()" style="background: #f14705; color: white; border: none;">
+            <i class="fa fa-cart-plus mr-1"></i> Thêm vào giỏ hàng
+        </button>
+    </div>
+</ng-template>
+
+<div class="ps-newsletter">
+    <div class="container">
+        <form class="ps-form--newsletter">
+            <div class="row">
+                <div class="col-xl-5 col-lg-12">
+                    <div class="ps-form__left">
+                        <h3>Bản tin</h3>
+                        <p>Đăng ký nhận thông tin ưu đãi</p>
+                    </div>
+                </div>
+                <div class="col-xl-7 col-lg-12">
+                    <div class="ps-form__right">
+                        <div class="form-group--nest">
+                            <input class="form-control" type="email" placeholder="Địa chỉ Email">
+                            <button class="ps-btn">Gửi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<ng-template #t let-fill="fill">
+    <span class="star" [class.full]="fill === 100" style="font-size: 90%;">
+        <span class="half" [style.width.%]="fill"><i class="fa fa-star"></i></span>
+        <i class="fa fa-star"></i>
+    </span>
+</ng-template>

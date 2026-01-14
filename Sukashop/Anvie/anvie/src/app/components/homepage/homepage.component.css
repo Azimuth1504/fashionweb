@@ -1,0 +1,47 @@
+.star {
+  position: relative;
+  display: inline-block;
+  font-size: 5rem;
+  color: #d3d3d3;
+}
+.full {
+  color: #ffcc23;
+}
+.half {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  color: #ffcc23;
+}
+
+.banner_slider {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+.banner_slider {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+.banner_slide {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.banner_slide img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.banner_slide.active {
+  opacity: 1;
+  position: relative;
+}

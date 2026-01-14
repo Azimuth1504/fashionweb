@@ -1,0 +1,32 @@
+<ng-container *ngIf="isLoggedIn">
+  <button class="chat-fab" (click)="toggleOpen()" aria-label="Mở tư vấn mua hàng">
+    Tư vấn mua hàng
+  </button>
+
+  <div class="chat-panel" *ngIf="isOpen">
+    <div class="chat-header">
+      <div class="chat-title">Tư vấn mua hàng</div>
+      <button class="chat-close" (click)="close()" aria-label="Đóng chat">×</button>
+    </div>
+
+    <div class="chat-body" #messagesContainer>
+      <div
+        *ngFor="let msg of messages"
+        class="chat-message"
+        [class.user]="msg.role === 'USER'"
+        [class.assistant]="msg.role !== 'USER'">
+        <div class="chat-bubble">{{ msg.content }}</div>
+      </div>
+      <div *ngIf="isLoading" class="chat-typing">Đang trả lời...</div>
+    </div>
+
+    <div class="chat-input">
+      <input
+        type="text"
+        placeholder="Nhập tin nhắn..."
+        [(ngModel)]="inputMessage"
+        (keydown.enter)="sendMessage()" />
+      <button (click)="sendMessage()" [disabled]="isLoading || !inputMessage.trim()">Gửi</button>
+    </div>
+  </div>
+</ng-container>
