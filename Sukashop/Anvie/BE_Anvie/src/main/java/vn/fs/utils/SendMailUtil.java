@@ -308,7 +308,7 @@ public class SendMailUtil {
 
 	static String HEADERDELIVER = "<body style=\"margin: 0 !important; padding: 0 !important; background-color: #5B3236;\" bgcolor=\"#5B3236\">\r\n"
 			+ "    <div style=\"display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: Open Sans, Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;\">\r\n"
-			+ "        Cửa hàng thời trang uy tín SUKASHOP\r\n" + "    </div>\r\n"
+			+ "        Cửa hàng thời trang uy tín JUSTINSHOP\r\n" + "    </div>\r\n"
 			+ "    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n" + "        <tr>\r\n"
 			+ "            <td align=\"center\" style=\"background-color: #eeeeee;\" bgcolor=\"#eeeeee\">\r\n"
 			+ "                <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:600px;\">\r\n"
@@ -345,7 +345,7 @@ public class SendMailUtil {
 
 	static String HEADERSUCCESS = "<body style=\"margin: 0 !important; padding: 0 !important; background-color: #5B3236;\" bgcolor=\"#5B3236\">\r\n"
 			+ "    <div style=\"display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: Open Sans, Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;\">\r\n"
-			+ "        Cửa hàng thời trang uy tín SUKASHOP\r\n" + "    </div>\r\n"
+			+ "        Cửa hàng thời trang uy tín JUSTINSHOP\r\n" + "    </div>\r\n"
 			+ "    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n" + "        <tr>\r\n"
 			+ "            <td align=\"center\" style=\"background-color: #eeeeee;\" bgcolor=\"#eeeeee\">\r\n"
 			+ "                <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:600px;\">\r\n"
@@ -381,7 +381,7 @@ public class SendMailUtil {
 
 	static String HEADERCANCEL = "<body style=\"margin: 0 !important; padding: 0 !important; background-color: #5B3236;\" bgcolor=\"#5B3236\">\r\n"
 			+ "    <div style=\"display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: Open Sans, Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;\">\r\n"
-			+ "        Cửa hàng thời trang uy tín SUKASHOP\r\n" + "    </div>\r\n"
+			+ "        Cửa hàng thời trang uy tín JUSTINSHOP\r\n" + "    </div>\r\n"
 			+ "    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n" + "        <tr>\r\n"
 			+ "            <td align=\"center\" style=\"background-color: #eeeeee;\" bgcolor=\"#eeeeee\">\r\n"
 			+ "                <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:600px;\">\r\n"
@@ -482,7 +482,7 @@ public class SendMailUtil {
 			+ "                                <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:600px;\">\r\n"
 			+ "                                    <tr>\r\n"
 			+ "                                        <td align=\"center\" style=\"font-family: Open sans-serif; font-size: 18px; font-weight: 400; line-height: 24px; padding: 5px 0 10px 0;\">\r\n"
-			+ "                                            <p style=\"font-size: 18px; font-weight: 800; line-height: 18px; color: #5B3236;\"> SUKASHOP </p>\r\n"
+			+ "                                            <p style=\"font-size: 18px; font-weight: 800; line-height: 18px; color: #5B3236;\"> JUSTINSHOP </p>\r\n"
 			+ "                                            <p style=\"font-family: Open sans-serif;\">Cảm ơn bạn đã tin tưởng chúng tôi - Chúc bạn một ngày vui vẻ!</p>\r\n"
 			+ "                                        </td>\r\n" + "                                    </tr>\r\n"
 			+ "\r\n" + "                                </table>\r\n" + "                            </td>\r\n"
